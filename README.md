@@ -53,7 +53,7 @@ npm run resetdb
   - `updateById` resolves to the updated account
   - `deleteById` resolves to the deleted account
 
-- Here is a cheatsheet for working with SQLite with Knex:
+- Here is a cheat sheet for working with SQLite with Knex:
 
 ```js
 db('foo-table') // returns a promise that resolves to an **array** with all records in the table
