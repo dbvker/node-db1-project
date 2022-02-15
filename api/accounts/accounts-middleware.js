@@ -1,10 +1,11 @@
 const Account = require('./accounts-model');
+const db = require('../../data/db-config');
 
 exports.checkAccountPayload = (req, res, next) => {
-    const error = { status: 400};
+    const error = { status: 400 };
     const { name, budget } = req.body;
 
-    if(name === undefined || budget === undefined) {
+    if (name === undefined || budget === undefined) {
         error.message = 'name and budget are required';
         next(error);
     } else if (typeof name !== 'string') {
@@ -24,23 +25,35 @@ exports.checkAccountPayload = (req, res, next) => {
     }
 };
 
-exports.checkAccountNameUnique = (req, res, next) => {
+exports.checkAccountNameUnique = async (req, res, next) => {
     // DO YOUR MAGIC
-    next();
+    try {
+        const existingName = await db('accounts')
+            .where('name', req.body.name.trim())
+            .first();
+
+        if (existingName) {
+            next({ status: 400, message: 'that name is taken' });
+        } else {
+            next();
+        }
+    } catch (err) {
+        next(err);
+    }
 };
 
 exports.checkAccountId = async (req, res, next) => {
-  // DO YOUR MAGIC
-  const { id } = req.params;
-  try {
-      const result = await Account.getById(id);
-      if (!result) {
-        next({ status: 404, message: 'account not found'})
-      } else {
-          req.result = result;
-          next();
-      }
-  } catch (err) {
-      next(err);
-  }
+    // DO YOUR MAGIC
+    const { id } = req.params;
+    try {
+        const result = await Account.getById(id);
+        if (!result) {
+            next({ status: 404, message: 'account not found' });
+        } else {
+            req.result = result;
+            next();
+        }
+    } catch (err) {
+        next(err);
+    }
 };
