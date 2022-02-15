@@ -17,13 +17,11 @@ exports.checkAccountId = async (req, res, next) => {
   const { id } = req.params;
   try {
       const result = await Account.getById(id);
-      if (result.length > 0) {
-        req.account = result;
-          next();
+      if (!result) {
+        next({ status: 404, message: 'account not found'})
       } else {
-          res.status(404).json({
-              message: 'account not found',
-          });
+          req.result = result;
+          next();
       }
   } catch (err) {
       next(err);

@@ -1,27 +1,25 @@
 const router = require('express').Router();
-
 const { checkAccountPayload, checkAccountNameUnique, checkAccountId } = require('./accounts-middleware');
 const Account = require('./accounts-model');
 
 router.get('/', (req, res, next) => {
     Account.getAll()
         .then((accounts) => {
-            res.status(200).json(accounts);
+            res.json(accounts);
         })
         .catch(next);
 });
 
 router.get('/:id', checkAccountId, (req, res, next) => {
     // DO YOUR MAGIC
-    const account = req.account;
-    res.json(account);
+    res.json(req.result);
 });
 
-router.post('/', (req, res, next) => {
+router.post('/', checkAccountPayload, checkAccountNameUnique, (req, res, next) => {
     // DO YOUR MAGIC
 });
 
-router.put('/:id', checkAccountId, (req, res, next) => {
+router.put('/:id', checkAccountPayload, checkAccountNameUnique, checkAccountId, (req, res, next) => {
     // DO YOUR MAGIC
 });
 
